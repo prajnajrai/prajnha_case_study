@@ -10,8 +10,20 @@ use App\Models\Avatar;
 use App\Models\Product;
 use Exception;
 
+/**
+ * Add Master data.
+ * This is to manage category, avatar, product masters
+ *
+ * @author Prajnha J Rai <prajna.adyanthaya@gmail.com>
+ */
 class MasterController extends Controller
 {
+
+	/**
+     * Create category master.
+     *
+     * @param Request $request
+     */
 	public function createCategory(Request $request) {
 		try {
 			$validatedData = $request->validate([
@@ -28,6 +40,11 @@ class MasterController extends Controller
 		}
 	}
 
+	/**
+     * Create Avatar master.
+     *
+     * @param Request $request
+     */
 	public function createAvatar(Request $request) {
 		try {
 			$validatedData = $request->validate([
@@ -44,6 +61,11 @@ class MasterController extends Controller
 		}
 	}
 
+	/**
+     * Create product master.
+     *
+     * @param Request $request
+     */
 	public function createProduct(Request $request) {
 		try {
 			$validatedData = $request->validate([
@@ -68,17 +90,36 @@ class MasterController extends Controller
 		}
 	}
 
+	/**
+     * Get Product List.
+     *
+     * @param Request $request
+     *
+     * @return App\Models\Product
+     */
 	public function getProducts(Request $request) {
 		$products = Product::get();
 		return response()->json(['products' => $products], 200);
 	}
 
+	/**
+     * Get Single Product details.
+     *
+     * @param int $id
+     *
+     * @return App\Models\Product
+     */
 	public function getProductDetails($id = null) {
 		$product = Product::join('categories', 'categories.id', 'products.category_id')
 		->join('avatars', 'avatars.id', 'products.avatar_id')->select('products.*', 'avatars.avatar', 'categories.category')->where('products.id', $id)->first();
 		return response()->json(['product' => $product], 200);
 	}
 
+	/**
+     * Get Product List.
+     *
+     * @param int $id
+     */
 	public function deleteProduct($id) {
 		Product::where('id', $id)->delete();
 		$products = Product::get();

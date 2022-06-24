@@ -17,26 +17,25 @@ use App\Http\Controllers\API\CartController;
 |
 */
 
-Route::group(['middleware' => 'throttle:api',], function() {
+Route::group(['middleware' => ['throttle:api','authapi']], function() {
 
 	Route::post('/auth/register', [AuthController::class, 'register']);
 
 	Route::post('/auth/login', [AuthController::class, 'login']);
 
-	Route::group(['middleware' => 'auth:sanctum',], function() {
+	Route::group(['middleware' => ['auth:sanctum','admin']], function() {
+		/* There APIs are accessed by Only existing Admins */
 		Route::post('avatars', [MasterController::class, 'createAvatar']);
 		Route::post('categories', [MasterController::class, 'createCategory']);
 		Route::post('products', [MasterController::class, 'createProduct']);
 		Route::delete('products/{id}', [MasterController::class, 'deleteProduct']);
 	});
 
+	/* There APIs can access by the guest or users */
 	Route::get('products', [MasterController::class, 'getProducts']);
 	Route::get('products/{id}', [MasterController::class, 'getProductDetails']);
-
 	Route::post('cart', [CartController::class, 'addToCart']);
 	Route::put('cart/{id}', [CartController::class, 'updateCart']);
 	Route::delete('cart/{id}', [CartController::class, 'deleteCart']);
 	Route::get('cart', [CartController::class, 'getCart']);
-
-	
 });
